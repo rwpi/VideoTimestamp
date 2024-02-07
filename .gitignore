@@ -1,2 +1,4 @@
-
+.gitattributes
+.DS_Store
+.gitignore
 media/.DS_Store
