@@ -1,7 +1,7 @@
 # Private Investigator Video Timestamp (VTS)
 
 
-![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/4d821b04586958bb583926b48f50803fe98709d1/media/Screenshot_1_0_0.png)
+![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/91617447c764ed805648242485d335d75eb3b4d9/media/Screenshot_1_0_1.png)
 
 ## Overview
 Private Investigator Video Timestamp (VTS) is a cross-platform Python-based application that adds timestamp overlays to camcorder video files. It leverages the metadata within a file to extract date and time information, which is then overlaid onto the video files.
@@ -40,3 +40,18 @@ The application provides four options for users to configure before initiating t
     - After configuring the above options, click the "Timestamp Video" button to start the process.
     - A progress bar will appear and fill up as the video is processed.
     - Once the progress bar is fully filled, your timestamped video is ready for viewing in the specified output folder.
+
+## Licenses and Acknowledgements
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+This application is built with Python and PyQt5, and it includes FFmpeg and Exiftool. 
+
+- [Python](https://www.python.org/): Python is licensed under the [Python Software Foundation License](https://docs.python.org/3/license.html).
+- [PyQt5](https://www.riverbankcomputing.com/software/pyqt/intro): PyQt5 is licensed under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) and its source can be downloaded [here](https://www.riverbankcomputing.com/software/pyqt/download).
+- [FFmpeg](https://ffmpeg.org/): FFmpeg is licensed under the [LGPLv2.1](http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) and its source can be downloaded [here](http://ffmpeg.org/download.html).
+- [ExifTool](https://exiftool.org/): ExifTool is licensed under the [Artistic License](https://opensource.org/licenses/Artistic-2.0) and its source can be downloaded [here](https://exiftool.org/source.html).
+
+Please note that each component is licensed under its own respective license.
+
+This application is distributed as a binary, which includes the Python interpreter.
