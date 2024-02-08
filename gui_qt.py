@@ -86,9 +86,6 @@ class MainWindow(QWidget):
 
         self.comboBox = QComboBox()
         self.comboBox.addItems(self.hwaccel_methods.keys())
-       
-        self.comboBox = QComboBox()
-        self.comboBox.addItems(self.hwaccel_methods.keys())
         self.layout.addWidget(self.comboBox)
         self.comboBox.setCurrentIndex(self.settings.value('comboBox_index', 0, type=int))
         self.comboBox.currentIndexChanged.connect(self.save_settings)
