@@ -25,7 +25,7 @@ class Worker(QThread):
     progressChanged = pyqtSignal(int)
     finished = pyqtSignal()  
 
-    def __init__(self, files, output_folder_path, hwaccel_method, remove_audio):
+    def __init__(self, files, output_folder_path, hwaccel_method, remove_audio): 
         super().__init__()
         self.files = files
         self.output_folder_path = output_folder_path

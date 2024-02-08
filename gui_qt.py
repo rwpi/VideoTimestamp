@@ -87,7 +87,6 @@ class MainWindow(QWidget):
         self.comboBox = QComboBox()
         self.comboBox.addItems(self.hwaccel_methods.keys())
         self.layout.addWidget(self.comboBox)
-        self.comboBox.setCurrentIndex(self.settings.value('comboBox_index', 0, type=int))
         self.comboBox.currentIndexChanged.connect(self.save_settings)
  
         checkbox_layout = QHBoxLayout()
@@ -165,12 +164,13 @@ class MainWindow(QWidget):
         self.check_if_ready_to_process()
 
     def check_if_ready_to_process(self):
-        if self.input_files and self.output_folder_path:
+        if self.input_files and self.output_folder_path and self.comboBox.currentText():
             self.process_button.setEnabled(True)
+        else:
+            self.process_button.setEnabled(False)
 
     def save_settings(self):
         self.settings.setValue('remove_audio', self.remove_audio_checkbox.isChecked())
-        self.settings.setValue('comboBox_index', self.comboBox.currentIndex())
       
     def main(self):
         self.progress.show()
