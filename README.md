@@ -1,5 +1,6 @@
 # Private Investigator Video Timestamp (VTS)
 
+
 ![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/4d821b04586958bb583926b48f50803fe98709d1/media/Screenshot_1_0_0.png)
 
 ## Overview
@@ -26,13 +27,11 @@ The application provides four options for users to configure before initiating t
     - You can select an existing folder or create a new one.
     - Upon completion, the timestamped files will be located in the chosen folder.
 
-3. **Choose Video Encoder**
-    - Select the video card used by your computer.
-    - By default, the application uses software encoding (libx264), which is much slower than using your video card.
-    - For most recent Windows laptops with Intel Processors, "Intel QSV" is the recommended choice.
-    - For most recent Windows laptops with AMD Processors, "AMD AMF" is the recommended choice.
-    - For most MacOS computers, "MacOS Videotoolbox" is the recommended choice.
-    - Options for other graphics cards are available for desktop workstations with dedicated graphics cards.
+3. **Choose Graphics Card**
+    - This option allows you to select the graphics card that your computer will use for video encoding.
+    - By default, the application uses software encoding (libx264), which is slower than hardware encoding.
+    - The application will automatically detect your computer's compatible graphics card and list it as an option. If your computer has multiple compatible graphics cards, all of them will be listed.
+    - If your computer uses an AMD graphics card, you will see two video encoder options. One is optimized for newer AMD hardware, and the other is for older AMD hardware. Choose the one that best matches your hardware.
 
 4. **Remove Audio**
     - If you prefer to have the audio removed from your timestamped video file, ensure this box is checked.

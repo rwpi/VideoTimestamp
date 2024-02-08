@@ -5,6 +5,9 @@ from PyQt5.QtCore import Qt, QTimer, QSettings, QUrl, QThread
 from PyQt5.QtGui import QPixmap, QDesktopServices
 from timestamp_win import Worker
 from datetime import datetime
+import getconfig_win
+
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -81,19 +84,11 @@ class MainWindow(QWidget):
         
         self.layout.addLayout(self.output_folder_layout)
 
-        self.hwaccel_methods = {
-            'Choose Video Encoder': 'libx264',
-            'Intel QSV (Reccomended)': 'h264_qsv',
-            'Intel/AMD VAAPI (Older Intel Machines)': 'h264_vaapi',
-            'Libx264 (Universally Compatible. Slow.)': 'libx264',
-            'Nvidia NVENC': 'h264_nvenc',
-            'Nvidia CUVID': 'h264_cuvid',
-            'ARM OpenMAX': 'h264_omx',
-            'OpenCL': 'h264_cl',
-            'AMD AMF': 'h264_amf',
-            'AMD VCE': 'h264_vce',
-        }
-        
+        self.hwaccel_methods = filter_hwaccel_methods(config)
+
+        self.comboBox = QComboBox()
+        self.comboBox.addItems(self.hwaccel_methods.keys())
+       
         self.comboBox = QComboBox()
         self.comboBox.addItems(self.hwaccel_methods.keys())
         self.layout.addWidget(self.comboBox)
@@ -200,6 +195,33 @@ class MainWindow(QWidget):
     def open_folder(self):
         if self.output_folder_path:
             QDesktopServices.openUrl(QUrl.fromLocalFile(self.output_folder_path))
+
+config = getconfig_win.get_config()
+
+def filter_hwaccel_methods(config):
+    cpu = config['cpu_manufacturer']
+    nvidia_gpu_present = config['nvidia_gpu_present']
+
+    hwaccel_methods = {
+        'Choose Graphics Card': 'libx264',
+        'Intel QSV': 'h264_qsv',
+        'No Graphics Card (Slow)': 'libx264',
+        'Nvidia NVENC': 'h264_nvenc',
+        'AMD AMF (Newer AMD Machines)': 'h264_amf',
+        'AMD VC (Older AMD Machines)': 'h264_vce',
+    }
+
+    if cpu != 'Intel':
+        del hwaccel_methods['Intel QSV']
+
+    if cpu != 'AMD':
+        del hwaccel_methods['AMD AMF (Newer AMD Machines)']
+        del hwaccel_methods['AMD VC (Older AMD Machines)']
+
+    if not nvidia_gpu_present:
+        del hwaccel_methods['Nvidia NVENC']
+
+    return hwaccel_methods
 
 app = QApplication([])
 window = MainWindow()
