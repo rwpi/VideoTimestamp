@@ -29,7 +29,8 @@ The application provides four options for users to configure before initiating t
 3. **Choose Video Encoder**
     - Select the video card used by your computer.
     - By default, the application uses software encoding (libx264), which is much slower than using your video card.
-    - For most recent Windows laptops, "Intel QSV" is the recommended choice.
+    - For most recent Windows laptops with Intel Processors, "Intel QSV" is the recommended choice.
+    - For most recent Windows laptops with AMD Processors, "AMD AMF" is the recommended choice.
     - For most MacOS computers, "MacOS Videotoolbox" is the recommended choice.
     - Options for other graphics cards are available for desktop workstations with dedicated graphics cards.
 
