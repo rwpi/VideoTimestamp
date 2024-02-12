@@ -4,7 +4,7 @@
 
 Follow these steps to install VTS:
 
-# [*Download Here*](https://github.com/rwpi/videotimestamp/releases/latest)
+ **[*Download Here*](https://github.com/rwpi/videotimestamp/releases/latest)**
 
 1. Click on the "Download Here" link above to go to the latest release page.
 2. Download the appropriate version for your operating system.
