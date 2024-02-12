@@ -2,11 +2,11 @@
 
 ## Installation
 
-[![Download Here](https://img.shields.io/badge/-Download%20Here-brightgreen?style=for-the-badge&logo=appveyor)](https://github.com/rwpi/videotimestamp/releases/latest)
-
 Follow these steps to install VTS:
 
-1. Click on the "Download Here" button above to go to the latest release page.
+# [*Download Here*](https://github.com/rwpi/videotimestamp/releases/latest)
+
+1. Click on the "Download Here" link above to go to the latest release page.
 2. Download the appropriate version for your operating system.
 
 For **Windows** users:
@@ -45,7 +45,7 @@ The application provides four options for users to configure before initiating t
     - Hardware acceleration is currently supported on Windows computers with Intel or AMD processors, and on all macOS computers.
     - If your computer is compatible and the box is checked, the application will automatically use your computer's graphics card for video encoding.
     - If the box is unchecked, or if your computer is not compatible, the application will use software encoding (libx264), which is slower.
-    
+
 4. **Remove Audio**
     - If you prefer to have the audio removed from your timestamped video file, ensure this box is checked.
 
