@@ -1,5 +1,21 @@
 # Private Investigator Video Timestamp (VTS)
 
+## Installation
+
+[![Download Here](https://img.shields.io/badge/-Download%20Here-brightgreen?style=for-the-badge&logo=appveyor)](https://github.com/rwpi/videotimestamp/releases/latest)
+
+Follow these steps to install VTS:
+
+1. Click on the "Download Here" button above to go to the latest release page.
+2. Download the appropriate version for your operating system.
+
+For **Windows** users:
+- You will receive a .EXE file in a zip folder.
+- Extract the zip folder and move `VTS.exe` to your preferred location, such as your desktop.
+
+For **macOS** users:
+- You will receive a .pkg installer file.
+- Open the .pkg file and follow the guided installer instructions.
 
 ![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/91617447c764ed805648242485d335d75eb3b4d9/media/Screenshot_1_0_1.png)
 
@@ -9,9 +25,6 @@ Private Investigator Video Timestamp (VTS) is a cross-platform Python-based appl
 Currently, VTS supports AVCHD (.MTS) video files from Sony and Panasonic camcorders. If your camera or video file format is not supported, please file an issue on GitHub with the camera make/model and a small sample video file. We are continually expanding our support and your contribution will help us improve.
 
 VTS is currently optimized for MacOS computers with builds for M1 and Intel available. We are actively working on expanding compatibility to include Windows and Linux systems in the near future. An experimental Windows build is now available.
-
-## Installation
-To install VTS, download the appropriate installer from the [Latest Release](https://github.com/rwpi/videotimestamp/releases/latest) section.
 
 ## Usage
 The application provides four options for users to configure before initiating the timestamping process:
@@ -27,12 +40,12 @@ The application provides four options for users to configure before initiating t
     - You can select an existing folder or create a new one.
     - Upon completion, the timestamped files will be located in the chosen folder.
 
-3. **Choose Graphics Card**
-    - This option allows you to select the graphics card that your computer will use for video encoding.
-    - By default, the application uses software encoding (libx264), which is slower than hardware encoding.
-    - The application will automatically detect your computer's compatible graphics card and list it as an option. If your computer has multiple compatible graphics cards, all of them will be listed.
-    - If your computer uses an AMD graphics card, you will see two video encoder options. One is optimized for newer AMD hardware, and the other is for older AMD hardware. Choose the one that best matches your hardware.
-
+3. **Enable Hardware Acceleration**
+    - Check this box to enable hardware acceleration, which can dramatically increase the speed of video processing.
+    - Hardware acceleration is currently supported on Windows computers with Intel or AMD processors, and on all macOS computers.
+    - If your computer is compatible and the box is checked, the application will automatically use your computer's graphics card for video encoding.
+    - If the box is unchecked, or if your computer is not compatible, the application will use software encoding (libx264), which is slower.
+    
 4. **Remove Audio**
     - If you prefer to have the audio removed from your timestamped video file, ensure this box is checked.
 
