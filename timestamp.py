@@ -46,7 +46,10 @@ class Worker(QThread):
         self.finished.emit()
 
     def get_metadata_timestamp(self, file_path):
-        exiftool_path = get_resource_path('exiftool')
+        if sys.platform == "darwin":  # If the host machine is macOS
+            exiftool_path = os.path.join(sys._MEIPASS, 'exiftool', 'exiftool') # Use the bundled exiftool
+        else:
+            exiftool_path = get_resource_path('exiftool')
         result = subprocess.run([exiftool_path, '-DateTimeOriginal', file_path], capture_output=True, text=True, creationflags=(subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0))
         if result.stderr:
             print("Error:", result.stderr)
