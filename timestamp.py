@@ -2,7 +2,6 @@ import subprocess
 import os
 import datetime
 from PyQt5.QtCore import QThread, pyqtSignal
-import getfont
 import sys
 import stat
 
@@ -12,6 +11,16 @@ def get_resource_path(relative_path):
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
+        if 'exiftool' in relative_path or 'ffmpeg' in relative_path:
+            return os.path.basename(relative_path)
+
+    # Add .exe extension if running on Windows
+    if sys.platform == "win32" and ('exiftool' in relative_path or 'ffmpeg' in relative_path):
+        relative_path += '.exe'
+
+    # For macOS and Linux, ensure 'exiftool' is in a subdirectory
+    elif 'exiftool' in relative_path and sys.platform != "win32":
+        relative_path = os.path.join('exiftool', relative_path)
 
     full_path = os.path.join(base_path, relative_path)
 
@@ -37,8 +46,12 @@ class Worker(QThread):
         self.finished.emit()
 
     def get_metadata_timestamp(self, file_path):
-        exiftool_path = os.path.join(sys._MEIPASS, 'exiftool', 'exiftool')
-        result = subprocess.run([exiftool_path, '-DateTimeOriginal', file_path], capture_output=True, text=True)
+        exiftool_path = get_resource_path('exiftool')
+        result = subprocess.run([exiftool_path, '-DateTimeOriginal', file_path], capture_output=True, text=True, creationflags=(subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0))
+        if result.stderr:
+            print("Error:", result.stderr)
+        if result.stdout:
+            print("Output:", result.stdout)
         timestamp = result.stdout.strip()
         return timestamp
 
@@ -50,20 +63,24 @@ class Worker(QThread):
     def burn_timestamp(self, file_path, start_time_unix, output_file):
         if os.path.exists(output_file):
             return
-        font_path = getfont.get_system_config()[1]
+
         ffmpeg_path = get_resource_path("ffmpeg")
         command = (
             f'{ffmpeg_path} -hide_banner -i "{file_path}" -vf '
-            f'"drawtext=fontfile={font_path}: '
+            f'"drawtext='
             f'text=\'%{{pts\\:localtime\\:{start_time_unix}\\:%X}}\': x=10: y=h-th-85: fontsize=48: fontcolor=white: shadowcolor=black: shadowx=2: shadowy=2, '
-            f'drawtext=fontfile={font_path}: '
+            f'drawtext='
             f'text=\'%{{pts\\:localtime\\:{start_time_unix}\\:%m-%d-%Y}}\': x=10: y=h-th-40: fontsize=48: fontcolor=white: shadowcolor=black: shadowx=2: shadowy=2'
         )
         command += f'" -c:v {self.hwaccel_method} -b:v 5000k'
         if self.remove_audio:
             command += ' -an'
         command += f' "{output_file}"'
-        subprocess.run(command, shell=True)
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, creationflags=(subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0))
+        if result.stderr:
+            print("Error:", result.stderr)
+        if result.stdout:
+            print("Output:", result.stdout)
 
     def process_videos(self, files, set_progress):
         set_progress(0)

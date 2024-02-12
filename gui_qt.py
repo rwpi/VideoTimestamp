@@ -1,11 +1,12 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QLabel, QProgressBar, QFileDialog, QHBoxLayout, QComboBox, QListWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QLabel, QProgressBar, QFileDialog, QHBoxLayout, QListWidget
 from PyQt5.QtCore import Qt, QTimer, QSettings, QUrl
 from PyQt5.QtGui import QPixmap, QDesktopServices
 from timestamp import Worker
 from datetime import datetime
-import getconfig_macos
+import sys
+import platform
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -82,24 +83,19 @@ class MainWindow(QWidget):
         
         self.layout.addLayout(self.output_folder_layout)
         
-        self.hwaccel_methods = filter_hwaccel_methods(config)
-
-        self.comboBox = QComboBox()
-        self.comboBox.addItems(self.hwaccel_methods.keys())
-        self.layout.addWidget(self.comboBox)
-        self.comboBox.currentIndexChanged.connect(self.save_settings)
- 
-        checkbox_layout = QHBoxLayout()
-        checkbox_layout.addStretch(1)
-
+        self.hwaccel_method = self.filter_hwaccel_methods()
+       
         self.remove_audio_checkbox = QCheckBox("Remove Audio")
         self.remove_audio_checkbox.setChecked(self.settings.value('remove_audio', True, type=bool))
-        checkbox_layout.addWidget(self.remove_audio_checkbox)
         self.remove_audio_checkbox.stateChanged.connect(self.save_settings)
+        self.layout.addWidget(self.remove_audio_checkbox)
 
-        checkbox_layout.addStretch(1)
-
-        self.layout.addLayout(checkbox_layout)
+        self.use_hwaccel_checkbox = QCheckBox("Use Hardware Acceleration")
+        self.use_hwaccel_checkbox.setChecked(self.settings.value('use_hwaccel', True, type=bool))
+        self.use_hwaccel_checkbox.stateChanged.connect(self.save_settings)
+        if self.hwaccel_method == 'libx264':
+            self.use_hwaccel_checkbox.setEnabled(False)
+        self.layout.addWidget(self.use_hwaccel_checkbox)
 
         self.process_button = QPushButton("Timestamp Videos")
         self.process_button.clicked.connect(self.main)
@@ -128,6 +124,25 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.link_label)
 
         self.setLayout(self.layout)
+
+#    def check_for_updates(self):
+#        current_version = "VTS-1.0.2"  # replace with your current version
+#        repo_owner = "rwpi"
+#        repo_name = "videotimestamp"
+#
+#        try:
+#            response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest")
+#            response.raise_for_status()  # Raises a HTTPError if the response was unsuccessful
+#            data = response.json()
+#
+#            if data.get("tag_name") and data["tag_name"] > current_version:
+#                self.update_label.setText('<a href="{0}">Update Available</a>'.format(data["html_url"]))
+#        except requests.exceptions.RequestException:
+#            print("Failed to check for updates")
+            
+#    def open_update_link(self, link):
+#        QDesktopServices.openUrl(QUrl(link))
+
 
     def update_output_folder_path(self, path):
         self.output_folder_path = path
@@ -164,57 +179,52 @@ class MainWindow(QWidget):
         self.check_if_ready_to_process()
 
     def check_if_ready_to_process(self):
-        if self.input_files and self.output_folder_path and self.comboBox.currentText():
+        if self.input_files and self.output_folder_path:
             self.process_button.setEnabled(True)
         else:
             self.process_button.setEnabled(False)
 
     def save_settings(self):
         self.settings.setValue('remove_audio', self.remove_audio_checkbox.isChecked())
-      
-    def main(self):
-        self.progress.show()
-        if self.input_files:
-            self.timer.start(500)
-            hwaccel_method = self.hwaccel_methods[self.comboBox.currentText()]
-            remove_audio = self.remove_audio_checkbox.isChecked()
-            self.worker = Worker(self.input_files, self.output_folder_path, hwaccel_method, remove_audio) 
-            self.worker.progressChanged.connect(self.progress.setValue)
-            self.worker.finished.connect(self.on_worker_finished)
-            self.worker.start()
+        self.settings.setValue('use_hwaccel', self.use_hwaccel_checkbox.isChecked())
 
     def on_worker_finished(self):
         self.timer.stop()
         self.progress.show()
+        self.process_button.setEnabled(True)  # Enable the button when the worker finishes
 
     def open_folder(self):
         if self.output_folder_path:
             QDesktopServices.openUrl(QUrl.fromLocalFile(self.output_folder_path))
 
-config = getconfig_macos.get_config()
+    def main(self):
+        self.progress.show()
+        if self.input_files:
+            self.timer.start(500)
+            hwaccel_method = self.hwaccel_method if self.use_hwaccel_checkbox.isChecked() else 'libx264'
+            remove_audio = self.remove_audio_checkbox.isChecked()
+            self.worker = Worker(self.input_files, self.output_folder_path, hwaccel_method, remove_audio) 
+            self.worker.progressChanged.connect(self.progress.setValue)
+            self.worker.finished.connect(self.on_worker_finished)
+            self.worker.start()
+            self.process_button.setEnabled(False)  # Disable the button when the worker starts
 
-def filter_hwaccel_methods(config):
-    nvidia_gpu_present = config['nvidia_gpu_present']
-    amd_gpu_present = config['amd_gpu_present']
+    def filter_hwaccel_methods(self):
+        system = platform.system()
+        cpu_info = platform.processor()
 
-    hwaccel_methods = {
-        'Choose Graphics Card': 'libx264',
-        'Apple Graphics': 'h264_videotoolbox',
-        'No Graphics Card (Slow)': 'libx264',
-        'Nvidia NVENC': 'h264_nvenc',
-        'AMD AMF (Newer AMD Machines)': 'h264_amf',
-        'AMD VC (Older AMD Machines)': 'h264_vce',
-    }
+        if system == 'Darwin':
+            return 'h264_videotoolbox'
+        elif system == 'Windows':
+            if 'Intel' in cpu_info:
+                return 'h264_qsv'
+            elif 'AMD' in cpu_info:
+                return 'h264_amf'
+            elif 'ARM' in cpu_info:
+                return 'libx264'
+        else:
+            return 'libx264'
 
-    if not nvidia_gpu_present:
-        del hwaccel_methods['Nvidia NVENC']
-
-    if not amd_gpu_present:
-        del hwaccel_methods['AMD AMF (Newer AMD Machines)']
-        del hwaccel_methods['AMD VC (Older AMD Machines)']
-
-    return hwaccel_methods
-        
 app = QApplication([])
 window = MainWindow()
 window.show()
