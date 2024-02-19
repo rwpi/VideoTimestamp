@@ -7,7 +7,7 @@ Private Investigator Video Timestamp (VTS) is a cross-platform Python-based appl
 
 Currently, VTS supports AVCHD (.MTS) video files from Sony and Panasonic camcorders. If your camera or video file format is not supported, please file an issue on GitHub with the camera make/model and a small sample video file. We are continually expanding our support and your contribution will help us improve.
 
-VTS is currently optimized for MacOS computers with builds for M1 and Intel available. We are actively working on expanding compatibility to include Windows and Linux systems in the near future. An experimental Windows build is now available.
+VTS is currently optimized for macOS computers with builds for M1 and Intel available. We are actively working on expanding compatibility to include Windows and Linux systems in the near future. An experimental Windows build is now available.
 
 
 ![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/91617447c764ed805648242485d335d75eb3b4d9/media/Screenshot_1_0_1.png)
@@ -25,7 +25,7 @@ For **Windows** users:
 - Open the zip folder and move `VTS.exe` to your preferred location, such as your desktop.
 
 For **macOS** users:
-- VTS for MacOS is distributed as a .pkg installer file.
+- VTS for macOS is distributed as a .pkg installer file.
 - Open the .pkg file and follow the guided installer instructions.
 
 ## Usage
