@@ -21,11 +21,11 @@ Follow these steps to install VTS:
 2. Download the appropriate version for your operating system.
 
 For **Windows** users:
-- You will receive a .EXE file in a zip folder.
-- Extract the zip folder and move `VTS.exe` to your preferred location, such as your desktop.
+- VTS for Windows is distributed as a .exe file in a zip folder.
+- Open the zip folder and move `VTS.exe` to your preferred location, such as your desktop.
 
 For **macOS** users:
-- You will receive a .pkg installer file.
+- VTS for MacOS is distributed as a .pkg installer file.
 - Open the .pkg file and follow the guided installer instructions.
 
 ## Usage
