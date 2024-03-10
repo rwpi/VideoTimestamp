@@ -60,6 +60,7 @@ class Worker(QThread):
 
     def to_unix_timestamp(self, date_str):
         date_str = date_str.split(': ', 1)[-1]  # Remove the 'Date/Time Original              :' part
+        date_str = date_str.replace(" DST", "")  # Remove ' DST' if present
         dt = datetime.datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S%z')
         return int(dt.timestamp())    
 
