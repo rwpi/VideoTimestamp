@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QLabel, QProgressBar, QFileDialog, QHBoxLayout, QListWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QLabel, QProgressBar, QFileDialog, QHBoxLayout, QListWidget, QToolBar, QAction, QMenu, QMenuBar, QMainWindow
 from PyQt5.QtCore import Qt, QTimer, QSettings, QUrl
 from PyQt5.QtGui import QPixmap, QDesktopServices
 from timestamp import Worker
@@ -8,7 +8,7 @@ from datetime import datetime
 import sys
 import platform
 
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -25,6 +25,58 @@ class MainWindow(QWidget):
         self.copyright_label.setStyleSheet("color: grey; font-size: 10px;")
         self.output_folder_path = ""
     
+        self.central_widget = QWidget()
+
+        # Set the layout on the QWidget
+        self.central_widget.setLayout(self.layout)
+
+        # Set the QWidget as the central widget of the QMainWindow
+        self.setCentralWidget(self.central_widget)
+
+        self.setWindowTitle("Video Timestamp")
+
+        # Create the menu bar
+        self.menu_bar = self.menuBar()
+
+        # Create the settings menu
+        self.settings_menu = self.menu_bar.addMenu("Settings")
+
+        # Create the checkbox actions
+        self.use_hwaccel_action = QAction("Use Hardware Acceleration", self)
+        self.use_hwaccel_action.setCheckable(True)
+        self.use_hwaccel_action.setChecked(self.settings.value('use_hwaccel', True, type=bool))
+        self.use_hwaccel_action.triggered.connect(self.save_settings)
+
+        self.remove_audio_action = QAction("Remove Audio", self)
+        self.remove_audio_action.setCheckable(True)
+        self.remove_audio_action.setChecked(self.settings.value('remove_audio', True, type=bool))
+        self.remove_audio_action.triggered.connect(self.save_settings)
+
+        # Create the fixes menu
+        self.fixes_menu = self.menu_bar.addMenu("Fixes")
+
+        # Create the checkbox action
+        self.manually_adjusted_for_dst_action = QAction("Manually set DST", self)
+        self.manually_adjusted_for_dst_action.setCheckable(True)
+        self.manually_adjusted_for_dst_action.triggered.connect(self.save_settings)
+
+        # Add the checkbox action to the dropdown menu
+        self.fixes_menu.addAction(self.manually_adjusted_for_dst_action)
+
+        # Create the checkbox actions
+        self.add_hour_action = QAction("Adjust timestamp +1 hour", self)
+        self.add_hour_action.setCheckable(True)
+        self.add_hour_action.setChecked(self.settings.value('add_hour', False, type=bool))
+        self.add_hour_action.triggered.connect(self.save_settings)
+
+        self.subtract_hour_action = QAction("Adjust timestamp -1 hour", self)
+        self.subtract_hour_action.setCheckable(True)
+        self.subtract_hour_action.setChecked(self.settings.value('subtract_hour', False, type=bool))
+        self.subtract_hour_action.triggered.connect(self.save_settings)
+
+        # Add the checkbox actions to the fixes menu
+        self.fixes_menu.addAction(self.add_hour_action)
+        self.fixes_menu.addAction(self.subtract_hour_action)
 
         self.setWindowTitle("Video Timestamp")
 
@@ -85,17 +137,13 @@ class MainWindow(QWidget):
         
         self.hwaccel_method = self.filter_hwaccel_methods()
        
-        self.remove_audio_checkbox = QCheckBox("Remove Audio")
-        self.remove_audio_checkbox.setChecked(self.settings.value('remove_audio', True, type=bool))
-        self.remove_audio_checkbox.stateChanged.connect(self.save_settings)
-        self.layout.addWidget(self.remove_audio_checkbox)
+        # Add the checkbox actions to the settings menu
+        self.settings_menu.addAction(self.use_hwaccel_action)
+        self.settings_menu.addAction(self.remove_audio_action)
 
-        self.use_hwaccel_checkbox = QCheckBox("Use Hardware Acceleration")
-        self.use_hwaccel_checkbox.setChecked(self.settings.value('use_hwaccel', True, type=bool))
-        self.use_hwaccel_checkbox.stateChanged.connect(self.save_settings)
-        if self.hwaccel_method == 'libx264':
-            self.use_hwaccel_checkbox.setEnabled(False)
-        self.layout.addWidget(self.use_hwaccel_checkbox)
+        # Add the checkbox actions to the settings menu
+        self.settings_menu.addAction(self.use_hwaccel_action)
+        self.settings_menu.addAction(self.remove_audio_action)
 
         self.process_button = QPushButton("Timestamp Videos")
         self.process_button.clicked.connect(self.main)
@@ -107,8 +155,6 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.progress)
 
         self.timer = QTimer()
-
-        self.setLayout(self.layout)
 
         current_year = datetime.now().year
         self.copyright_label.setText(f"© {current_year} Robert Webber")
@@ -123,7 +169,14 @@ class MainWindow(QWidget):
         self.link_label.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.link_label)
 
-        self.setLayout(self.layout)
+        self.version_label = QLabel("Ver. 1.1.0")
+        self.version_label.setStyleSheet("color: grey; font-size: 10px;")
+        self.version_label.setAlignment(Qt.AlignCenter)
+
+        # Add the version label to the layout
+        self.layout.addWidget(self.version_label)
+
+
 
 #    def check_for_updates(self):
 #        current_version = "VTS-1.0.2"  # replace with your current version
@@ -185,8 +238,11 @@ class MainWindow(QWidget):
             self.process_button.setEnabled(False)
 
     def save_settings(self):
-        self.settings.setValue('remove_audio', self.remove_audio_checkbox.isChecked())
-        self.settings.setValue('use_hwaccel', self.use_hwaccel_checkbox.isChecked())
+        self.settings.setValue('remove_audio', self.remove_audio_action.isChecked())
+        self.settings.setValue('use_hwaccel', self.use_hwaccel_action.isChecked())
+        self.settings.setValue('manually_adjusted_for_dst', self.manually_adjusted_for_dst_action.isChecked())
+        self.settings.setValue('add_hour', self.add_hour_action.isChecked())
+        self.settings.setValue('subtract_hour', self.subtract_hour_action.isChecked())
 
     def on_worker_finished(self):
         self.timer.stop()
@@ -201,9 +257,12 @@ class MainWindow(QWidget):
         self.progress.show()
         if self.input_files:
             self.timer.start(500)
-            hwaccel_method = self.hwaccel_method if self.use_hwaccel_checkbox.isChecked() else 'libx264'
-            remove_audio = self.remove_audio_checkbox.isChecked()
-            self.worker = Worker(self.input_files, self.output_folder_path, hwaccel_method, remove_audio) 
+            hwaccel_method = self.hwaccel_method if self.settings.value('use_hwaccel', True, type=bool) else 'libx264'
+            remove_audio = self.settings.value('remove_audio', True, type=bool)
+            manually_adjusted_for_dst = self.manually_adjusted_for_dst_action.isChecked()
+            add_hour = self.settings.value('add_hour', False, type=bool)
+            subtract_hour = self.settings.value('subtract_hour', False, type=bool)
+            self.worker = Worker(self.input_files, self.output_folder_path, hwaccel_method, remove_audio, manually_adjusted_for_dst, add_hour, subtract_hour)
             self.worker.progressChanged.connect(self.progress.setValue)
             self.worker.finished.connect(self.on_worker_finished)
             self.worker.start()

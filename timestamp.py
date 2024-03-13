@@ -34,12 +34,15 @@ class Worker(QThread):
     progressChanged = pyqtSignal(int)
     finished = pyqtSignal()  
 
-    def __init__(self, files, output_folder_path, hwaccel_method, remove_audio): 
+    def __init__(self, files, output_folder_path, hwaccel_method, remove_audio, manually_adjusted_for_dst, add_hour, subtract_hour): 
         super().__init__()
         self.files = files
         self.output_folder_path = output_folder_path
         self.hwaccel_method = hwaccel_method
         self.remove_audio = remove_audio
+        self.manually_adjusted_for_dst = manually_adjusted_for_dst
+        self.add_hour = add_hour
+        self.subtract_hour = subtract_hour
 
     def run(self):
         self.process_videos(self.files, self.set_progress)
@@ -62,7 +65,13 @@ class Worker(QThread):
         date_str = date_str.split(': ', 1)[-1]  # Remove the 'Date/Time Original              :' part
         date_str = date_str.replace(" DST", "")  # Remove ' DST' if present
         dt = datetime.datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S%z')
-        return int(dt.timestamp())    
+        if self.manually_adjusted_for_dst:
+            dt = dt - datetime.timedelta(hours=1)  # Adjust for DST
+        if self.add_hour:
+            dt = dt + datetime.timedelta(hours=1)  # Add an hour
+        if self.subtract_hour:
+            dt = dt - datetime.timedelta(hours=1)  # Subtract an hour
+        return int(dt.timestamp())
 
     def burn_timestamp(self, file_path, start_time_unix, output_file):
         if os.path.exists(output_file):
@@ -98,7 +107,14 @@ class Worker(QThread):
             if creation_date:
                 creation_date = creation_date.split(': ', 1)[-1]  # Remove the 'Date/Time Original              :' part
                 start_time_unix = self.to_unix_timestamp(creation_date)
-                output_file_name = datetime.datetime.strptime(creation_date.split()[0], '%Y:%m:%d').strftime('%m-%d-%Y') + '_' + creation_date.split()[1].split('-')[0].replace(':', '-') + ".mp4"
+                dt = datetime.datetime.strptime(creation_date.split()[0], '%Y:%m:%d')
+                if "DST" in creation_date:
+                    dt = dt - datetime.timedelta(hours=1)  # Adjust for DST
+                if self.add_hour:
+                    dt = dt + datetime.timedelta(hours=1)  # Add an hour
+                if self.subtract_hour:
+                    dt = dt - datetime.timedelta(hours=1)  # Subtract an hour
+                output_file_name = dt.strftime('%m-%d-%Y') + '_' + creation_date.split()[1].split('-')[0].replace(':', '-') + ".mp4"
                 output_file = os.path.join(self.output_folder_path, output_file_name)
                 self.burn_timestamp(file_path, start_time_unix, output_file)
 
