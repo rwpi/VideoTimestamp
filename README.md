@@ -67,11 +67,11 @@ The fixes menu contains three optional settings to help you correct your timesta
     - This feature corrects timestamps for video files affected by this misconfiguration. It's specifically designed for videos recorded during the Springtime adjustment period.
     - After adjusting your video files, ensure your camcorder is set properly for future recordings. Activate the "DST ON" setting in your camcorder during Spring to automatically adjust for DST, and verify the clock now shows the correct time.
 
-2. **Adjsut timestamp +1 hour**
+2. **Adjust timestamp +1 hour**
     - This option moves your video's timestamp forward by one hour, to address other camcorder misconfigurations.
     - After using this feature, verify your camcorder's settings to prevent future timestamp errors.
 
-3. **Adjsut timestamp -1 hour**
+3. **Adjust timestamp -1 hour**
     - This option moves your video's timestamp backward by one hour, to address other camcorder misconfigurations.
     - After using this feature, verify your camcorder's settings to prevent future timestamp errors.
 
