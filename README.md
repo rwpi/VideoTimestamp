@@ -1,4 +1,4 @@
-# Private Investigator Video Timestamp (VTS)
+# Video Timestamp (VTS)
 
 # **[*Download Here*](https://github.com/rwpi/videotimestamp/releases/latest)**
 
@@ -76,8 +76,7 @@ The fixes menu contains three optional settings to help you correct your timesta
     - After using this feature, verify your camcorder's settings to prevent future timestamp errors.
 
 ## Licenses and Acknowledgements
-
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is created and maintained by Robert Webber. It is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
 This application is built with Python and PyQt5, and it includes FFmpeg and Exiftool. 
 
