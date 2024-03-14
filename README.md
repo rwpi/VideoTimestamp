@@ -10,7 +10,7 @@ Currently, VTS supports AVCHD (.MTS) video files from Sony and Panasonic camcord
 VTS is currently optimized for macOS computers with builds for M1 and Intel available. We are actively working on expanding compatibility to include Windows and Linux systems in the near future. An experimental Windows build is now available.
 
 
-![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/91617447c764ed805648242485d335d75eb3b4d9/media/Screenshot_1_0_1.png)
+![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/b7b8258df40d16ea3a50b6efbb7981a1df02d94c/media/Screenshot_1_1_1.png)
 
 
 ## Installation
@@ -29,7 +29,7 @@ For **macOS** users:
 - Open the .pkg file and follow the guided installer instructions.
 
 ## Usage
-The application provides four options for users to configure before initiating the timestamping process:
+The application allows the user to timestamp their video in three easy steps:
 
 1. **Choose Input Files**
     - Select the video files to be timestamped.
@@ -42,19 +42,38 @@ The application provides four options for users to configure before initiating t
     - You can select an existing folder or create a new one.
     - Upon completion, the timestamped files will be located in the chosen folder.
 
-3. **Enable Hardware Acceleration**
+3. **Timestamp Video**
+    - After configuring the above options, click the "Timestamp Video" button to start the process.
+    - A progress bar will appear and fill up as the video is processed.
+    - Once the progress bar is fully filled, your timestamped video is ready for viewing in the specified output folder.
+
+## "Settings" Menu
+The settings menu contains two optional settings:
+
+1. **Enable Hardware Acceleration**
     - Check this box to enable hardware acceleration, which can dramatically increase the speed of video processing.
     - Hardware acceleration is currently supported on Windows computers with Intel or AMD processors, and on all macOS computers.
     - If your computer is compatible and the box is checked, the application will automatically use your computer's graphics card for video encoding.
     - If the box is unchecked, or if your computer is not compatible, the application will use software encoding (libx264), which is slower.
 
-4. **Remove Audio**
+2. **Remove Audio**
     - If you prefer to have the audio removed from your timestamped video file, ensure this box is checked.
 
-5. **Timestamp Video**
-    - After configuring the above options, click the "Timestamp Video" button to start the process.
-    - A progress bar will appear and fill up as the video is processed.
-    - Once the progress bar is fully filled, your timestamped video is ready for viewing in the specified output folder.
+## "Fixes" Menu
+The fixes menu contains three optional settings to help you correct your timestamp accuracy if your camcorder was misconfigured:
+
+1. **Manually Set DST**
+    - If you've manually set your camera's clock forward by one hour in the Spring for Daylight Saving Time (DST) instead of activating the "DST ON" feature, your video files may end up with incorrect timestamps.
+    - This feature corrects timestamps for video files affected by this misconfiguration. It's specifically designed for videos recorded during the Springtime adjustment period.
+    - After adjusting your video files, ensure your camcorder is set properly for future recordings. Activate the "DST ON" setting in your camcorder during Spring to automatically adjust for DST, and verify the clock now shows the correct time.
+
+2. **Adjsut timestamp +1 hour**
+    - This option moves your video's timestamp forward by one hour, to address other camcorder misconfigurations.
+    - After using this feature, verify your camcorder's settings to prevent future timestamp errors.
+
+3. **Adjsut timestamp -1 hour**
+    - This option moves your video's timestamp backward by one hour, to address other camcorder misconfigurations.
+    - After using this feature, verify your camcorder's settings to prevent future timestamp errors.
 
 ## Licenses and Acknowledgements
 
