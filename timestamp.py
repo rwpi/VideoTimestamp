@@ -107,14 +107,8 @@ class Worker(QThread):
             if creation_date:
                 creation_date = creation_date.split(': ', 1)[-1]  # Remove the 'Date/Time Original              :' part
                 start_time_unix = self.to_unix_timestamp(creation_date)
-                dt = datetime.datetime.strptime(creation_date.split()[0], '%Y:%m:%d')
-                if "DST" in creation_date:
-                    dt = dt - datetime.timedelta(hours=1)  # Adjust for DST
-                if self.add_hour:
-                    dt = dt + datetime.timedelta(hours=1)  # Add an hour
-                if self.subtract_hour:
-                    dt = dt - datetime.timedelta(hours=1)  # Subtract an hour
-                output_file_name = dt.strftime('%m-%d-%Y') + '_' + creation_date.split()[1].split('-')[0].replace(':', '-') + ".mp4"
+                dt = datetime.datetime.fromtimestamp(start_time_unix)  # Convert the Unix timestamp back to a datetime
+                output_file_name = dt.strftime('%m-%d-%Y_%H-%M-%S') + ".mp4"
                 output_file = os.path.join(self.output_folder_path, output_file_name)
                 self.burn_timestamp(file_path, start_time_unix, output_file)
 
