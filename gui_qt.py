@@ -1,16 +1,15 @@
-import sys
-import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QProgressBar, QFileDialog, QHBoxLayout, QListWidget, QAction, QMainWindow, QMessageBox
+import sys, os, showsdcard
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QProgressBar, QFileDialog, QHBoxLayout, QListWidget, QAction, QMainWindow, QMessageBox, QProgressDialog
 from PyQt5.QtCore import Qt, QTimer, QSettings, QUrl
 from PyQt5.QtGui import QPixmap, QDesktopServices
 from timestamp import Worker
 from datetime import datetime
-import sys
-import requests
 from magicrenamer import MagicRenamerThread
 from hwaccel_filter import filter_hwaccel_methods
 from autodelete import delete_files
 from magicrenamergui import MagicRenamerDialog
+from importtoday import ImportThread
+from check_for_updates import check_for_updates
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -77,6 +76,12 @@ class MainWindow(QMainWindow):
         self.magic_renamer_action = QAction("Magic Renamer", self)
         self.magic_renamer_action.triggered.connect(self.launch_magic_renamer_gui)
         self.tools_menu.addAction(self.magic_renamer_action)
+        import_today_action = QAction('Magic Importer', self)
+        import_today_action.triggered.connect(self.start_import)
+        self.tools_menu.addAction(import_today_action)
+        show_sd_card_action = QAction('Show SD Card', self)
+        show_sd_card_action.triggered.connect(showsdcard.show_sd_card)
+        self.tools_menu.addAction(show_sd_card_action)
 
         self.setWindowTitle("Video Timestamp")
         self.logo_label = QLabel()
@@ -157,25 +162,9 @@ class MainWindow(QMainWindow):
         self.check_for_updates()
 
     def check_for_updates(self):
-        current_version = "1.1.1_BETA4"
-        repo_owner = "rwpi"
-        repo_name = "videotimestamp"
-
-        try:
-            response = requests.get(f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest")
-            response.raise_for_status() 
-            data = response.json()
-
-            if data.get("tag_name") and data["tag_name"] > f"VTS-{current_version}":
-                self.version_label.setText(f'Update available! Current version: {current_version}')
-                self.version_label.setStyleSheet("color: red; font-size: 10px;")
-            else:
-                self.version_label.setText(f"Ver. {current_version}")
-                self.version_label.setStyleSheet("color: grey; font-size: 10px;")
-        except requests.exceptions.RequestException:
-            print("Failed to check for updates")
-            self.version_label.setText(f"Ver. {current_version}")
-            self.version_label.setStyleSheet("color: grey; font-size: 10px;")
+        text, style = check_for_updates()
+        self.version_label.setText(text)
+        self.version_label.setStyleSheet(style)
 
     def launch_magic_renamer_gui(self):
         self.magic_renamer_gui = MagicRenamerDialog(self.output_folder_path)
@@ -268,6 +257,46 @@ class MainWindow(QMainWindow):
             self.worker.finished.connect(self.on_worker_finished)
             self.worker.start()
             self.process_button.setEnabled(False)
+
+    def start_import(self):
+        self.import_thread = ImportThread()
+        self.import_thread.progress.connect(self.update_progress)
+        self.import_thread.finished.connect(self.finish_import)
+        self.import_thread.start()
+        self.progress_dialog = QProgressDialog("Importing...", "Cancel", 0, 100, self)
+        self.progress_dialog.canceled.connect(self.import_thread.terminate)
+        self.progress_dialog.show()
+        self.import_thread.finished.connect(self.set_output_folder)
+        self.import_thread.finished.connect(self.add_new_files)
+
+    def update_progress(self, value):
+        self.progress_dialog.setValue(value)
+
+    def finish_import(self):
+        self.progress_dialog.close()
+
+    def set_output_folder(self, folder_path):
+        # Set the output folder to the new folder
+        self.output_folder_path = folder_path
+
+        # Update the output_folder_label text
+        folder_name = os.path.basename(self.output_folder_path)
+        self.output_folder_label.setText(f"Output Folder: {folder_name}")
+
+        self.check_if_ready_to_process()
+        
+    def add_new_files(self, folder_path, new_files):
+        # Set the output folder to the new folder
+        self.output_folder = folder_path
+
+        # Add the new files to the input files list
+        self.input_files.extend(new_files)
+        self.input_files_label.setText(f"{len(self.input_files)} Input Files Selected")
+        self.input_files_list.clear()
+        for file in self.input_files:
+            self.input_files_list.addItem(os.path.basename(file)) 
+
+        self.check_if_ready_to_process()
 
 app = QApplication([])
 window = MainWindow()
