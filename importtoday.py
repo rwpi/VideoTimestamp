@@ -46,7 +46,7 @@ class ImportThread(QThread):
             self.progress.emit((i + 1) * 100 // len(files_to_copy))
 
         # Get the list of new files
-        new_files = [str(path) for path in Path(folder_path).rglob('*') if path.is_file()]
+        new_files = [str(path) for path in Path(folder_path).rglob('*.MTS') if path.is_file()]
 
         # Emit the path of the new folder and the list of new files when finished
         self.finished.emit(str(folder_path), new_files)
