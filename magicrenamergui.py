@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QFileDialog, QMessageBox
-from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtCore import QUrl, Qt
+from PyQt5.QtCore import Qt
 from magicrenamer import MagicRenamerThread
 import os 
 
@@ -10,8 +9,10 @@ class MagicRenamerDialog(QDialog):
         self.output_folder_path = output_folder_path
         self.magic_renamer_thread = None
 
-        self.setWindowTitle("Magic Renamer")
+        self.setWindowTitle("Renamer")
         self.layout = QVBoxLayout(self)
+
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         self.select_folder_button = QPushButton("Select Target Folder")
         self.select_folder_button.clicked.connect(self.select_folder)

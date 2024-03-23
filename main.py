@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
             self.magic_renamer_thread = MagicRenamerThread(directory)
             self.magic_renamer_thread.start()
         else:
-            QMessageBox.warning(self, "No Output Folder", "Please choose an output folder before starting the magic renamer.")
+            QMessageBox.warning(self, "No Output Folder", "Please choose an output folder before starting the rename tool.")
 
     def open_update_link(self, link):
         QDesktopServices.openUrl(QUrl(link))
@@ -148,6 +148,8 @@ class MainWindow(QMainWindow):
         self.import_thread.finished.connect(self.finish_import)
         self.import_thread.start()
         self.progress_dialog.progress_dialog = QProgressDialog("Importing...", "Cancel", 0, 100, self)
+        self.progress_dialog.progress_dialog.setWindowTitle("Importer") 
+        self.progress_dialog.progress_dialog.setWindowFlags(self.progress_dialog.progress_dialog.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.progress_dialog.progress_dialog.canceled.connect(self.import_thread.terminate)
         self.progress_dialog.progress_dialog.show()
         self.import_thread.finished.connect(self.set_output_folder)
