@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
     def choose_input_files(self):
         new_input_files, _ = QFileDialog.getOpenFileNames(self, 'Select .MTS files', '', 'MTS Files (*.MTS)')
         if new_input_files:
-            self.input_files.extend(new_input_files)
+            self.input_files.update(new_input_files)
             self.input_files_label.setText(f"{len(self.input_files)} Input Files Selected")
             self.input_files_list.clear()
             for file in self.input_files:
