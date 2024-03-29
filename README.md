@@ -1,7 +1,6 @@
 # Video Timestamp (VTS)
 
-# **[*Download Latest Release Here*](https://github.com/rwpi/videotimestamp/releases/latest)**
-# *[*Get Beta Version Here*](https://github.com/rwpi/videotimestamp/releases/tag/VTS-1.1.1_BETA7)*
+# **[*Download Latest Version Here*](https://github.com/rwpi/videotimestamp/releases/latest)**
 
 ## Overview
 Video Timestamp (VTS) is a cross-platform Python-based application that adds timestamp overlays to camcorder video files. It leverages the metadata within a file to extract date and time information, which is then overlaid onto the video files.
@@ -60,6 +59,16 @@ The settings menu contains two optional settings:
 2. **Remove Audio**
     - If you prefer to have the audio removed from your timestamped video file, ensure this box is checked.
 
+3. **Delete Input Files When Finished**
+    - This setting will delete your old .MTS files after your new timestamped .MP4 files are created. 
+    - This is meant for organizing and saving space on your computer. 
+    - Only use this if your input files have been coppied to your computer(such as through the "Import Today" tool). If your input files are still on your SD card, using this setting risks data loss.
+
+4. **Run Renamer When Finished**
+    - This setting will automatically add a clip number and Claimant/Integrity tag to your file names when finished.
+    - It works on VTS timestamped files and also on Lawmate .MOV files
+    - If you need to fix your clip numbers after adding or removing files from your folder, the Renamer can be run again manually from the "Tools" menu.
+
 ## "Fixes" Menu
 The fixes menu contains three optional settings to help you correct your timestamp accuracy if your camcorder was misconfigured:
 
@@ -75,6 +84,25 @@ The fixes menu contains three optional settings to help you correct your timesta
 3. **Adjust timestamp -1 hour**
     - This option moves your video's timestamp backward by one hour, to address other camcorder misconfigurations.
     - After using this feature, verify your camcorder's settings to prevent future timestamp errors.
+
+
+## "Tools" Menu
+The tools menu contains three tools which you can run manually:
+
+1. **Import Today from SD Card**
+    - The Import tool will find today's video from your SD card, then copy it to your computer. 
+    - It will create a folder for today's date in your Videos folder (Windows) or Movies folder (MacOS) where the imported files will be copied to. 
+    - It will then automatically add the imported files to the VTS Input Files list and set today's folder to the VTS Output Folder. 
+    - Once your files are imported, the only thing left to do is click "Timestamp Videos."
+
+2. **Show .MTS Files On SD Card**
+    - The Show SD Card tool will automatically find the buried folder in your SD card where your video files are kept and open that folder in a file browser for you.
+    - This tool is intended solely for the user's reference and convenience. The folder is otherwise difficult to manually access for MacOS users or new Windows users.
+
+3. **Automatic Renaming Tool**
+    - The Renamer tool will automatically add a clip number and Claimant/Integrity tag to your file names.
+    - It will ask you to choose a folder. All VTS timestamped files and Lawmate .MOV files in that folder will be renamed.
+    - If you need to fix your clip numbers after adding or removing files from your folder, the Renamer can be run multiple times.
 
 ## Licenses and Acknowledgements
 This project is created and maintained by Robert Webber. It is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
