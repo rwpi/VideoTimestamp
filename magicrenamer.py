@@ -32,8 +32,10 @@ def get_resource_path(relative_path):
     return full_path
 
 def get_metadata(file_path):
-    '''Extracts the CreateDate and Duration from the file's metadata.'''
-    exiftool_path = get_resource_path('exiftool')
+    if sys.platform == "darwin":  # If the host machine is macOS
+        exiftool_path = os.path.join(sys._MEIPASS, 'exiftool', 'exiftool') # Use the bundled exiftool
+    else:
+        exiftool_path = get_resource_path('exiftool')
 
     create_date_command = [exiftool_path, '-CreateDate', '-s', '-s', '-s', file_path]
     duration_command = [exiftool_path, '-Duration', '-s', '-s', '-s', file_path]
