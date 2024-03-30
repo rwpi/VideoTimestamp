@@ -9,10 +9,6 @@ Currently, VTS supports AVCHD (.MTS) video files from Sony and Panasonic camcord
 
 VTS is currently optimized for macOS computers with builds for M1 and Intel available. We are actively working on expanding compatibility to include Windows and Linux systems in the near future. An experimental Windows build is now available.
 
-
-![Screenshot of the application](https://github.com/rwpi/videotimestamp/blob/b7b8258df40d16ea3a50b6efbb7981a1df02d94c/media/Screenshot_1_1_1.png)
-
-
 [![V1.1.1 Demo Video](https://img.youtube.com/vi/yWhUIidJE6w/maxresdefault.jpg)](https://youtu.be/yWhUIidJE6w)
 
 ## Installation
